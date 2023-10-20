@@ -24,11 +24,8 @@ def get_args():
                         choices=["VGAE", "PEG", "GraphSAGE"],
                         help='model to use.')
     parser.add_argument('--type_process_emb', type=str, default="sub",
-                        choices=['sub', 'dist', 'none'],
+                        choices=['sub', 'dist', 'dist_signed', 'sub_signed', 'emb_mlp'],
                         help='feature-type')
-    parser.add_argument('--type_scaling', type=str, default="mlp",
-                        choices=['mlp', 'lin'],
-                        help='scaling-type')
                         
     args, _ = parser.parse_known_args()
     args.cuda = not args.no_cuda and torch.cuda.is_available()
