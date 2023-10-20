@@ -8,31 +8,7 @@ import numpy as np
 import scipy.sparse as sp
 from sklearn.metrics import roc_auc_score
 
-def get_interventional_emb_peg(pos, train_edges, probe_edge_index, model, x, device, type_set='test'):
-    '''
-    make sure that the positive edges are in the first half of the vector, 
-    while the negative ones are in the second half.
-    '''
-    
-    
-    size_vector = probe_edge_index.shape[1]
-    
-    for i, j in enumerate(probe_edge_index.T):
-        jprime = j
-        jprime[0], jprime[1]= j[1], j[0]
-        if type_set == 'train' and i <= size_vector//2:
-            # here, probe_edge_index are equal to train_edges. so, there isn't problem to remove
-            # the edge to probe_edge_index and assign to edge_index
-            edge_index = torch.cat((probe_edge_index[:, :i], probe_edge_index[:, i+1:]), dim=1)
-        else:
-            edge_index = torch.cat([train_edges, j[:, None], jprime[:, None]], dim=1)
-        node_embeddings = model.embedding(x, pos, edge_index)
-        nodes_first_ = node_embeddings[j[0]]
-        nodes_second_ = node_embeddings[j[1]]
-        
-        yield nodes_first_ * nodes_second_
-
-def get_interventional_emb_vgae(train_edges, probe_edge_index, model, x, device, type_set='test'):
+def get_interventional_emb(train_edges, probe_edge_index, model, x, device, type_set='test'):
     '''
     make sure that the positive edges are in the first half of the vector, 
     while the negative ones are in the second half.
@@ -56,8 +32,7 @@ def get_interventional_emb_vgae(train_edges, probe_edge_index, model, x, device,
         
         yield nodes_first_ * nodes_second_
 
-def agr_emb(pos_edge_index, neg_edge_index, embedding_edges):
-    edge_index = torch.cat([pos_edge_index, neg_edge_index], dim=-1)
+def agr_emb(edge_index, embedding_edges):
 
     nodes_first = embedding_edges[edge_index[0]]
     nodes_second = embedding_edges[edge_index[1]]
