@@ -20,6 +20,9 @@ def get_args():
     parser.add_argument('--type_process_emb', type=str, default="sub",
                         choices=['sub', 'dist', 'none'],
                         help='feature-type')
+    parser.add_argument('--type_calibrator', type=str, default="iso",
+                        choices=['iso', 'hist', 'bbq', 'temp'],
+                        help='feature-type')
                         
     args, _ = parser.parse_known_args()
     args.cuda = not args.no_cuda and torch.cuda.is_available()

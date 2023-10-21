@@ -11,8 +11,6 @@ import argparse
 from args_models import get_args
 args = get_args()
 
-args.dataset = 'cora'
-
 device_string = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 device = torch.device(device_string)
 
@@ -73,6 +71,8 @@ input_dict = {'y_pred_pos': link_logits_test.sigmoid().squeeze()[torch.where(lin
                 'y_pred_neg': link_logits_test.sigmoid().squeeze()[torch.where(link_labels_test == 0)[0]]}
 print('hits@20: ', round(evaluator20.eval(input_dict)['hits@20']*100,2))
 print('hits@50: ', round(evaluator50.eval(input_dict)['hits@50']*100,2))
+
+
 
 path="models/"
 torch.save(

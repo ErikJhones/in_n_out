@@ -25,3 +25,6 @@ python train_in_n_out.py --model_gnn VGAE --dataset cora --type_process_emb sub 
 
 # Infer IN-N-OUT
 python infer_in_n_out.py --type_process_emb sub --dataset cora --model_gnn VGAE
+
+# traditional calibration
+python traditional_calibration.py --dataset cora --model_gnn VGAE --type_calibrator hist

@@ -10,6 +10,9 @@ from ogb.linkproppred import Evaluator
 from sklearn.metrics import roc_auc_score
 import numpy as np
 
+import argparse
+from args_models import get_args
+args = get_args()
 
 def traditional_calibrator(link_logits, link_labels,  link_logits_test, tipo='iso'):
     if tipo=='iso':
@@ -35,9 +38,9 @@ device_string = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 device = torch.device(device_string)
 
 seed = 42
-dataset_name = "cora"
-gnn = 'VGAE'
-type_calibrator = 'hist'
+dataset_name = args.dataset
+gnn = args.model_gnn
+type_calibrator = args.type_calibrator
 path="models/"
 
 data, _ = choose_dataset(dataset_name)
@@ -55,6 +58,12 @@ for para in model.parameters():
 edge_index_val, link_logits_val, link_labels_val, n_val = get_model_data(model, data, 'val', device)
 edge_index_test, link_logits_test, link_labels_test, n_test = get_model_data(model, data, 'test', device)
 edge_index_train, link_logits_train, link_labels_train, n_train = get_model_data(model, data, 'train', device)
+
+
+neg_idx = torch.where(link_labels_test == 0)[0]
+neg_log = link_logits_test.sigmoid()[neg_idx]
+log, idx = torch.sort(neg_log)
+print(log[-20:])
 
 eces_test = []
 aucs_test = []
@@ -82,4 +91,4 @@ evaluator50 = Evaluator(name = 'ogbl-collab')
 input_dict = {'y_pred_pos': output_test.squeeze()[torch.where(link_labels_test == 1)[0]],
                 'y_pred_neg': output_test.squeeze()[torch.where(link_labels_test == 0)[0]]}
 print('hits@20: ', evaluator20.eval(input_dict)['hits@20']*100)
-print('hits@500: ', evaluator50.eval(input_dict)['hits@50']*100)
+print('hits@50: ', evaluator50.eval(input_dict)['hits@50']*100)
