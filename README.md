@@ -17,17 +17,26 @@ pip install netcal
 
 pip install matplotlib
 
-# Train GNN model (VGAE)
+# Train and infer IN-N-OUT cora
 `python train_gnn_model.py --dataset cora --model_gnn VGAE`
+ece: 15.36  
+auc:  89.39  
+hits@20:  48.96   
+hits@50:  66.41  
 
-# Train IN-N-OUT
+`python traditional_calibration.py --dataset cora --model_gnn VGAE --type_calibrator hist`
+ece: 11.31  
+auc:  89.07  
+hits@20:  38.33  
+hits@50:  54.64 
+
 `python train_in_n_out.py --model_gnn VGAE --dataset cora --type_process_emb sub --epochs 20 --lr 0.001`
 
-# Infer IN-N-OUT
 `python infer_in_n_out.py --type_process_emb sub --dataset cora --model_gnn VGAE`
-
-# traditional calibration
-`python traditional_calibration.py --dataset cora --model_gnn VGAE --type_calibrator hist`
+ece: 2.57  
+auc: 89.23  
+hits@20:  46.67  
+hits@50:  67.93  
 
 # train and infer IN-N-OUT pubmed
 `python train_gnn_model.py --dataset pubmed --model_gnn VGAE`  
